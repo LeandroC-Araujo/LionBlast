@@ -14,31 +14,16 @@ int main ()
         }
     }
 
-    bool good = false;
-    int xA;
-    int yA;
-
-    while (!good) {
-        xA = rand()%57;
-        yA = rand()%40;
-        if ((mapa[yA+2][xA] != '@') && (mapa[yA+2][xA+3] != '@') && (mapa[yA+3][xA] == '@')) {
-            good = true;
-        }else{
-            good = false;
-        }
-    }
-
-    VetorBi S;
-
-    S.x = xA+3;
-    S.y = yA-3;
+    VetorBi sA;
 
     float v;
 
     int teste;
-    A.Inicia(xA-3, yA-2);
+    A.Inicia(sA.x-3, sA.y-2);
+    //sA.x = A.S.x;
+    //sA.y = A.S.y;
     while (1) {
         cin >> v;
-        A.DisparaBala(v, 30, S);
+        A.DisparaBala(v, 30, sA);
     }
 }
