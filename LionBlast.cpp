@@ -9,8 +9,10 @@ int main ()
     Canhao B; ///Canhão do jogador 2 (spawna do lado direito)
     VetorBi sA; ///Posição XY do jogador 1 no mapa
     VetorBi sB; ///Posição XY do jogador 2 no mapa
-    float vA; ///Velocidade do TIRO do jogador 1
-    float vB; ///Velocidade do TIRO do jogador 2
+    float vA = 0; ///Velocidade do TIRO do jogador 1
+    float vB = 0; ///Velocidade do TIRO do jogador 2
+    char start; ///Detecta a tecla para iniciar o gauge
+    int g = 0; ///Contador do gauge
 
     /**Imprime o mapa */
     for (int j = 0; j < 45; j++) {
@@ -26,12 +28,15 @@ int main ()
     sB.x = B.S.x-2; ///Importação da coordenada X da posição do jogador 2
     sB.y = B.S.y-2; ///Importação da coordenada Y da posição do jogador 2
     while (1) {
-        cin >> vA;
-        getch();
+        vA = 0;
+        vB = 0;
+        start = getch();
+        A.Gauge(1, false);
+        vA = A.v;
         A.DisparaBala(vA, 30, sA, false);
-        cin >> vB;
+        //start = getch();
+        //B.Gauge(123, true);
+        cin >> vB; //= B.v;
         B.DisparaBala(vB, 30, sB, true);
     }
-
-
 }
