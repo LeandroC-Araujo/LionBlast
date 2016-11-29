@@ -16,7 +16,7 @@ class Canhao {
 public:
     /**Vetor posição (armazena para usar na função de TIRO)*/
     VetorInt S;
-    float v;
+    float v = 0;
     /**Recebe os limites da coordenada X e o nome do arquivo correspondente ao canhão
     correto e Imprime o canhão em uma posição aleatória dentro desse limite*/
     void Inicia(int i, int f, string arquivo) {
@@ -37,28 +37,30 @@ public:
     /**O canhão é impresso na posição definitiva*/
     ImprimirArquivo(arquivo, S.x-3, S.y-2);
     }
-    void Gauge (int x, bool menos) {
-        GotoXY(0,0);
-        int g = 0;
-        char start;
-        start = getch();
-        if (start == ' ') {
-            while (!kbhit()) {
-                if (g < 30) {
-                    GotoXY(x,43);
-                    cout << (char)219;
-                    g++;
-                    v+=0.1;
-                    if (!menos) {
-                        x++;
-                    }else{
-                        if (menos) {
-                            x--;
-                        }
-                    }
-                    Sleep(250);
-                }
-            }
+
+    float Gauge (int x, bool menos) {
+    GotoXY(0,0);
+    int g = 0;
+    char start;
+
+    start = getch();
+    if (start == ' ') {
+        while (!kbhit()) {
+        if(g < 30) {
+            GotoXY(x,43);
+            cout << (char)219;
+            g++;
+            v+=0.1;
+        if(!menos){
+        x++;
+        }else{
+        if (menos){
+        x--;
+        }
+        }
+        Sleep(250);
+        }
+        }
         }
     }
     /**Recebe a velocidade do TIRO, o ângulo, a posição inicial do canhão e o lado do canhão -
@@ -77,16 +79,16 @@ public:
         /**Verifica colisão e para o TIRO quando ele colidir com o mapa*/
         for (float t = 0; mapa[Ycoord][Xcoord] != '@'; t += 0.03) {
             if (!menos) {
-            coord = MovRetUniVariado(Vx, Vy, s0, t, 100);
+            coord = MovRetUniVariado_esquerda(Vx, Vy, s0, t, 100);
             }else{
                 if (menos) {
-                    coord = MovRetUniVariado(-1*Vx, Vy, s0, t, 1000);
+                    coord = MovRetUniVariado_direita(Vx, Vy, s0, t, 100);
                 }
             }
             /**Imprime o TIRO na coordenada atual*/
             GotoXY(coord.x, coord.y);
             cout << "*";
-            GotoXY(118,0);
+            GotoXY(100,0);
             cout << v;
             Xcoord = static_cast <int> (coord.x); ///Pega a parte inteira de X
             Ycoord = static_cast <int> (coord.y); ///Pega a parte inteira de Y
@@ -96,4 +98,5 @@ public:
             cout << " ";
         }
     }
+
 };

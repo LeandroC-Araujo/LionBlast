@@ -124,6 +124,16 @@ void CorFundo(DOS_COLORS iColor) {
     SetConsoleTextAttribute (hl, bufferInfo.wAttributes |= (iColor << 4));
 }
 
+void CorTudo(DOS_COLORS iColor){
+    HANDLE hl = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
+    BOOL b = GetConsoleScreenBufferInfo(hl, &bufferInfo);
+    bufferInfo.wAttributes &= 0x000F;
+    bufferInfo.wAttributes &= 0x00F0;
+    SetConsoleTextAttribute (hl, bufferInfo.wAttributes |= (iColor << 4));
+    SetConsoleTextAttribute (hl, bufferInfo.wAttributes |= iColor);
+}
+
 
 void FPRETO() /// FUNDO
 {
@@ -285,6 +295,7 @@ void Limpo()
 
 }
 }
+
 
 ///=====================================================================================\\\
 /**

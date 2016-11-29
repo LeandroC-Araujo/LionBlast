@@ -13,10 +13,22 @@ VetorBi MovRetUniforme (float v, VetorBi s0, float t) {
 
 /**\brief recebe as velocidades X e Y, o vetor posição, o tempo e a aceleração e retorna a posição
           após descrever o Movimento Retilíneo Uniformemente Variado */
-VetorBi MovRetUniVariado (float Vx, float Vy, VetorBi s0, float t, float a) {
+VetorBi MovRetUniVariado_esquerda (float Vx, float Vy, VetorBi s0, float t, float a) {
     VetorBi coord;
-    coord.y = s0.y - Vy*t + (a*(t*t))/2;
+
+    coord.y = s0.y - Vy*t + a*(t*t)/2;
     coord.x = s0.x + Vx*t;
+
+    return coord;
+}
+
+/**\brief recebe as velocidades X e Y, o vetor posição, o tempo e a aceleração e retorna a posição
+          após descrever o Movimento Retilíneo Uniformemente Variado */
+VetorBi MovRetUniVariado_direita (float Vx, float Vy, VetorBi s0, float t, float a) {
+    VetorBi coord;
+
+    coord.y = s0.y - Vy*t + a*(t*t)/2;
+    coord.x = s0.x - Vx*t;
 
     return coord;
 }
