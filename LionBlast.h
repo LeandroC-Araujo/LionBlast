@@ -16,7 +16,7 @@ class Canhao {
 public:
     /**Vetor posição (armazena para usar na função de TIRO)*/
     VetorInt S;
-    float v = 0;
+    //float v = 0;
     /**Recebe os limites da coordenada X e o nome do arquivo correspondente ao canhão
     correto e Imprime o canhão em uma posição aleatória dentro desse limite*/
     void Inicia(int i, int f, string arquivo) {
@@ -38,31 +38,55 @@ public:
     ImprimirArquivo(arquivo, S.x-3, S.y-2);
     }
 
-    float Gauge (int x, bool menos) {
-    GotoXY(0,0);
-    int g = 0;
-    char start;
+    int DefineAngulo (char tecla) {
+        int angulo = 0;
+        while (tecla != ' '){
+            angulo = 0;
+            while (tecla != ' ' && angulo < 75 && angulo > -1) {
+            tecla = getch();
+            if (tecla == 72) {
+                angulo+=15;
+            }else {
+                if (tecla == 80) {
+                    angulo-=15;
+                }
+            }
+            GotoXY(50, 1);
+            cout << "       ";
+            GotoXY(50, 1);
+            cout << angulo;
+            }
+        }
+        return angulo;
+    }
 
-    start = getch();
-    if (start == ' ') {
-        while (!kbhit()) {
-        if(g < 30) {
-            GotoXY(x,43);
-            cout << (char)219;
-            g++;
-            v+=0.1;
-        if(!menos){
-        x++;
-        }else{
-        if (menos){
-        x--;
-        }
-        }
-        Sleep(250);
-        }
-        }
+    float Gauge (int x, bool menos) {
+        GotoXY(0,0);
+        int g = 0;
+        float v;
+        char start;
+        start = getch();
+        if (start == ' ') {
+            while (!kbhit()) {
+                if(g < 30) {
+                    GotoXY(x,43);
+                    cout << (char)219;
+                    g++;
+                    v+=0.1;
+                    if(!menos){
+                    x++;
+                }else{
+                    if (menos){
+                    x--;
+                    }
+                }
+                Sleep(250);
+                }
+            }
+            return v;
         }
     }
+
     /**Recebe a velocidade do TIRO, o ângulo, a posição inicial do canhão e o lado do canhão -
     !menos = lado esquerdo; menos = lado direito - e executa a trajetória do TIRO */
     void DisparaBala(float v, int angulo, VetorBi s0, bool menos) {
@@ -77,7 +101,7 @@ public:
         Vy = DecompoeVetorBi(v, angulo).y;
 
         /**Verifica colisão e para o TIRO quando ele colidir com o mapa*/
-        for (float t = 0; mapa[Ycoord][Xcoord] != '@'; t += 0.03) {
+        for (float t = 0; mapa[Ycoord][Xcoord] != '@';t += 0.05) {
             if (!menos) {
             coord = MovRetUniVariado_esquerda(Vx, Vy, s0, t, 100);
             }else{
@@ -85,11 +109,16 @@ public:
                     coord = MovRetUniVariado_direita(Vx, Vy, s0, t, 100);
                 }
             }
+            if (coord.x > 124 || coord.x < 0) {
+                break;
+            }
             /**Imprime o TIRO na coordenada atual*/
             GotoXY(coord.x, coord.y);
             cout << "*";
             GotoXY(100,0);
             cout << v;
+            GotoXY(50, 0);
+            cout << Xcoord << " " << Ycoord;
             Xcoord = static_cast <int> (coord.x); ///Pega a parte inteira de X
             Ycoord = static_cast <int> (coord.y); ///Pega a parte inteira de Y
             Sleep(250);
