@@ -1,6 +1,6 @@
-#include "todas.h"
-#include "lionphys.cpp" ///Biblioteca de física
-#include "mapa2.cpp" ///arquivo do mapa 1
+#include "todas.h" /// Biblioteca de funções para jogos (autoria de Yorhan Modesto Rogério e Thiago Ken Toyomoto)
+#include "lionphys.cpp" /// Biblioteca de física
+#include "mapa2.cpp" /// Arquivo do mapa 1
 
 using namespace std;
 
@@ -16,7 +16,7 @@ class Canhao {
 public:
     /**Vetor posição (armazena para usar na função de TIRO)*/
     VetorInt S;
-    //float v = 0;
+    VetorInt Defcoord;
     /**Recebe os limites da coordenada X e o nome do arquivo correspondente ao canhão
     correto e Imprime o canhão em uma posição aleatória dentro desse limite*/
     void Inicia(int i, int f, string arquivo) {
@@ -41,14 +41,19 @@ public:
     int DefineAngulo (char tecla) {
         int angulo = 0;
         while (tecla != ' '){
-            angulo = 0;
-            while (tecla != ' ' && angulo < 75 && angulo > -1) {
+            while (tecla != ' ' && angulo < 76 && angulo > -1) {
             tecla = getch();
             if (tecla == 72) {
                 angulo+=15;
+                if (angulo > 75) {
+                    angulo = 0;
+                }
             }else {
                 if (tecla == 80) {
                     angulo-=15;
+                    if (angulo < 0) {
+                        angulo = 75;
+                    }
                 }
             }
             GotoXY(50, 1);
@@ -80,7 +85,7 @@ public:
                     x--;
                     }
                 }
-                Sleep(250);
+                Sleep(200);
                 }
             }
             return v;
@@ -89,19 +94,27 @@ public:
 
     /**Recebe a velocidade do TIRO, o ângulo, a posição inicial do canhão e o lado do canhão -
     !menos = lado esquerdo; menos = lado direito - e executa a trajetória do TIRO */
-    void DisparaBala(float v, int angulo, VetorBi s0, bool menos) {
+    void DisparaBala(float V, int angulo, VetorBi s0, bool menos, VetorBi v) {
         VetorBi coord; ///coordenada do canhão
         float Vx; ///Componente X da velocidade
         float Vy; ///Componente Y da velocidade
-        int Xcoord = 0; ///Parte inteira da coordenada X (para índice do mapa)
+        int Xcoord; ///Parte inteira da coordenada X (para índice do mapa)
         int Ycoord = 0; ///Parte inteira da coordenada Y (para índice do mapa)
+        float vetorA[2];
+        float vetorB[2];
 
         /**Decompõe o vetor Velocidade em componentes X e Y*/
-        Vx = DecompoeVetorBi(v, angulo).x;
-        Vy = DecompoeVetorBi(v, angulo).y;
+        vetorA[0] = DecompoeVetorBi(V, angulo).x;
+        vetorA[1] = DecompoeVetorBi(V, angulo).y;
+
+        vetorB[0] = DecompoeVetorBi(v.x, v.y).x;
+        vetorB[1] = DecompoeVetorBi(v.x, v.y).y;
+        Vx = SomaESubtraiVetorBi(vetorA, vetorB, false).x;
+        Vy = SomaESubtraiVetorBi(vetorA, vetorB, false).y;
+
 
         /**Verifica colisão e para o TIRO quando ele colidir com o mapa*/
-        for (float t = 0; mapa[Ycoord][Xcoord] != '@';t += 0.05) {
+        for (float t = 0; mapa[Ycoord][Xcoord] != '@';t += 0.0001) {
             if (!menos) {
             coord = MovRetUniVariado_esquerda(Vx, Vy, s0, t, 100);
             }else{
@@ -116,15 +129,24 @@ public:
             GotoXY(coord.x, coord.y);
             cout << "*";
             GotoXY(100,0);
-            cout << v;
+            cout << V;
             GotoXY(50, 0);
-            cout << Xcoord << " " << Ycoord;
             Xcoord = static_cast <int> (coord.x); ///Pega a parte inteira de X
             Ycoord = static_cast <int> (coord.y); ///Pega a parte inteira de Y
-            Sleep(250);
+            Sleep(0.4);
             /**Apaga o TIRO da coordenada anterior*/
             GotoXY(coord.x, coord.y);
-            cout << " ";
+            cout << mapa[Ycoord][Xcoord];
+            //Defcoord.x = Xcoord;
+            //Defcoord.y = Ycoord;
+        }
+    }
+
+    bool Colisao(VetorBi coord, VetorBi S) {
+        if (coord.x == S.x && coord.y == S.y) {
+            return true;
+        }else{
+            return false;
         }
     }
 
