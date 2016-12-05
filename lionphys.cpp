@@ -20,22 +20,29 @@ VetorBi MovRetUniforme (float v, VetorBi s0, float t) {
 
 /**\brief recebe as velocidades X e Y, o vetor posição, o tempo e a aceleração e retorna a posição
           após descrever o Movimento Retilíneo Uniformemente Variado */
-VetorBi MovRetUniVariado_esquerda (float Vx, float Vy, VetorBi s0, float t, float a) {
+VetorBi MovRetUniVariado_esquerda (float Vx, float Vy, VetorBi s0, float t, float a, float vetor[2]) {
     VetorBi coord;
 
     coord.x = s0.x + Vx*t;
     coord.y = s0.y - Vy*t + a*(t*t)/2;
+
+    coord.x = coord.x + vetor[0]*t;
+    coord.y = coord.y + vetor[1]*t;
 
     return coord;
 }
 
 /**\brief recebe as velocidades X e Y, o vetor posição, o tempo e a aceleração e retorna a posição
           após descrever o Movimento Retilíneo Uniformemente Variado */
-VetorBi MovRetUniVariado_direita (float Vx, float Vy, VetorBi s0, float t, float a) {
+VetorBi MovRetUniVariado_direita (float Vx, float Vy, VetorBi s0, float t, float a, float vetor[2]) {
+
     VetorBi coord;
 
     coord.x = s0.x - Vx*t;
     coord.y = s0.y - Vy*t + a*(t*t)/2;
+
+    coord.x = coord.x + vetor[0]*t;
+    coord.y = coord.y + vetor[1]*t;
 
     return coord;
 }
@@ -44,9 +51,12 @@ VetorBi MovRetUniVariado_direita (float Vx, float Vy, VetorBi s0, float t, float
           após descrever o Movimento Oblíquo */
 VetorBi MovObliquo (float Vx, float Vy, VetorBi s0, float t, float a) {
     VetorBi coord;
+    float vetor[2];
+    vetor[0] = 0;
+    vetor[1] = 0;
 
     coord.x = MovRetUniforme(Vx, s0, t).x;
-    coord.y = MovRetUniVariado_esquerda(Vx, Vy, s0, t, a).y;
+    coord.y = MovRetUniVariado_esquerda(Vx, Vy, s0, t, a, vetor).y;
 
     return coord;
 }
@@ -96,5 +106,30 @@ bool ColideCirculo (VetorBi A, VetorBi B, float rA, float rB) {
         return true;
     }else{
         return false;
+    }
+}
+
+/** Igual o Bounding Box, porém a unidade A não possui volume */
+bool Colisao (VetorBi A, QUADRI B) {
+    float esquerda_B = B.x;
+    float direita_B = B.x + B.l;
+    float cima_B = B.y;
+    float baixo_B = B.y + B.h;
+    if (A.x > direita_B) {
+        return false;
+    }else{
+        if (A.x < esquerda_B) {
+            return false;
+        }else{
+            if (A.y > baixo_B) {
+                return false;
+            }else{
+                if (A.y < cima_B) {
+                    return false;
+                }else {
+                    return true;
+                }
+            }
+        }
     }
 }
