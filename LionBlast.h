@@ -1,6 +1,8 @@
 #include "todas.h" /// Biblioteca de funções para jogos (autoria de Yorhan Modesto Rogério e Thiago Ken Toyomoto)
 #include "lionphys.cpp" /// Biblioteca de física
-#include "mapa2.cpp" /// Arquivo do mapa 1
+#include "mapa1.cpp" /// Arquivo do mapa 1
+#include "mapa2.cpp" /// Arquivo do mapa 2
+#include "mapa3.cpp" /// Arquivo do mapa 3
 
 using namespace std;
 
@@ -17,7 +19,7 @@ public:
     VetorInt S;
     /**Recebe os limites da coordenada X e o nome do arquivo correspondente ao canhão
     correto e Imprime o canhão em uma posição aleatória dentro desse limite*/
-    void Inicia(int i, int f, string arquivo) {
+    void Inicia(int i, int f, string arquivo, char mapa[45][124]) {
         bool good = false; ///booleano de condição de saída do while
         /**Gera uma posição aleatória*/
         while (!good) {
@@ -52,7 +54,7 @@ public:
                     angulo = 0;
                 }
             }else {
-                /** CAso o jogador aperte para baixo: Ângulo diminui */
+                /** Caso o jogador aperte para baixo: Ângulo diminui */
                 if (tecla == 80) {
                     angulo-=15;
                     if (angulo < 0) {
@@ -109,6 +111,7 @@ public:
         int Ycoord = 0; ///Parte inteira da coordenada Y (para índice do mapa)
         float vetorA[2]; ///Vetor velocidade
         float vetorB[2]; ///Vetor vento
+        bool retorno = false;
 
         /** Decompõe o vetor Velocidade em componentes X e Y*/
         Vx = DecompoeVetorBi(V, angulo).x;
@@ -119,7 +122,7 @@ public:
         vetorB[1] = DecompoeVetorBi(v.x, v.y).y;
 
         /**Verifica colisão e para o TIRO quando ele colidir com o mapa*/
-        for (float t = 0; mapa[Ycoord][Xcoord] != '@' && !Colisao(coord, S);t += 0.0001) {
+        for (float t = 0; !Colide_mapa(Xcoord, Ycoord, mapa) && !Colisao(coord, S);t += 0.0001) {
             if (!menos) {
             coord = MovRetUniVariado_esquerda(Vx, Vy, s0, t, 100, vetorB);
             }else{
@@ -127,26 +130,30 @@ public:
                     coord = MovRetUniVariado_direita(Vx, Vy, s0, t, 100, vetorB);
                 }
             }
-
             /** Verifica se o tiro saiu da tela e para sua trajetória em caso verdadeiro */
             if (coord.x > 124 || coord.x < 0 || coord.y < 0) {
+                break;
+            }
+            Xcoord = static_cast <int> (coord.x); ///Pega a parte inteira de X
+            Ycoord = static_cast <int> (coord.y); ///Pega a parte inteira de Y
+            if (Colide_mapa(Xcoord, Ycoord, mapa)){
                 break;
             }
             /**Imprime o TIRO na coordenada atual*/
             GotoXY(coord.x, coord.y);
             cout << "*";
-            Xcoord = static_cast <int> (coord.x); ///Pega a parte inteira de X
-            Ycoord = static_cast <int> (coord.y); ///Pega a parte inteira de Y
-            Sleep(0.5);
+            Sleep(0.8);
             /**Apaga o TIRO da coordenada anterior*/
             GotoXY(coord.x, coord.y);
             cout << " ";
         }
         /** Verifica se a colisão ocorreu */
         if (Colisao(coord, S)) {
-            return true;
+            retorno = true;
+            return retorno;
         }else{
-            return false;
+            retorno = false;
+            return retorno;
         }
     }
 

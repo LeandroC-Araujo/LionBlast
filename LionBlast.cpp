@@ -1,4 +1,4 @@
-#include "LionBlast.h"
+#include "LionBlast.h" ///Biblioteca do jogo
 
 /** Recebe X desejado e limpa o Gauge */
 int LimpaGauge(int x) {
@@ -72,8 +72,10 @@ int main()
     bool win2 = false; ///True = troca de fase
     int scoreA = 0; ///placar do jogador A
     int scoreB = 0; ///placar do jogador B
+    int novo;
     char menu;
     char menu2;
+    char round[45][124];
 
     ConsoleSize(40,36); ///tamanho da tela
     srand(time(NULL));
@@ -100,7 +102,7 @@ int main()
     }
 
     else if (menu == 'n' || menu == 'N') {
-    while (menu2 != 'n' && menu2 != 'N') {
+    do {
     ConsoleSize(124,44);
 
     /** Loop do jogo */
@@ -108,43 +110,59 @@ int main()
     win = false;
     win2 = false;
     system("cls");
-    /**Imprime o mapa */
-    for (int j = 0; j < 45; j++) {
-        for (int i = 0; i < 124; i++) {
-            if (mapa[j][i] == '@') {
-                CorFonte(VERDE_CLARO);
-                cout << mapa[j][i];
-                ResetCor();
-            }else{
-                if (mapa[j][i] == ' ') {
-                    CorFonte(CIANO);
-                    cout << mapa[j][i];
-                    ResetCor();
+
+    novo = rand()%3+1;
+
+    /** Escolhe um mapa aleatoriamente e imprime ele na tela */
+
+    if (novo == 1) {
+        for (int j = 0; j < 45; j++) {
+            for (int i = 0; i < 124; i++) {
+                 round[j][i] = mapa[j][i];
+                 cout << round[j][i];
+            }
+        }
+    }else{
+        if (novo == 2) {
+            for (int j = 0; j < 45; j++) {
+                for (int i = 0; i < 124; i++) {
+                    round[j][i] = mapa2[j][i];
+                    cout << round[j][i];
+                }
+            }
+        }else{
+            if (novo == 3) {
+                for (int j = 0; j < 45; j++) {
+                    for (int i = 0; i < 124; i++) {
+                        round[j][i] = mapa3[j][i];
+                        cout << round[j][i];
+                    }
                 }
             }
         }
     }
+
     GotoXY(0,0);
     cout << scoreA;
     GotoXY(122,0);
     cout << scoreB;
 
     /** Inicia as posições dos jogadores no campo */
-    A.Inicia(0, 57, "tanque.txt");
-    B.Inicia(67, 57, "tanque2.txt");
+    A.Inicia(0, 57, "tanque.txt", round);
+    B.Inicia(67, 57, "tanque2.txt", round);
 
-    sA.x = A.S.x+2; ///Importação da coordenada X da posição do jogador 1
-    sA.y = A.S.y-2; ///Importação da coordenada Y da posição do jogador 1
+    sA.x = A.S.x; ///Importação da coordenada X da posição do jogador 1
+    sA.y = A.S.y-3; ///Importação da coordenada Y da posição do jogador 1
     sB.x = B.S.x-3; ///Importação da coordenada X da posição do jogador 2
     sB.y = B.S.y-3; ///Importação da coordenada Y da posição do jogador 2
 
 
-    tanqueA.x = A.S.x; /// Lado esquerdo do tanque A
-    tanqueA.y = A.S.y; /// Lado superior do tanque A
+    tanqueA.x = sA.x-3; /// Lado esquerdo do tanque A
+    tanqueA.y = sA.y-1; /// Lado superior do tanque A
     tanqueA.l = 3; /// Lado direito do tanque A
     tanqueA.h = 2; /// Lado inferior do tanque A
-    tanqueB.x = B.S.x; /// Lado esquerdo do tanque B
-    tanqueB.y = B.S.y; /// Lado superior do tanque B
+    tanqueB.x = sB.x; /// Lado esquerdo do tanque B
+    tanqueB.y = sB.y-1; /// Lado superior do tanque B
     tanqueB.l = 3; /// Lado direito do tanque B
     tanqueB.h = 2; /// Lado inferior do tanque B
 
@@ -160,25 +178,25 @@ int main()
             cout << "Para o leste";
     }else{
         if (vento.y == 45) {
-            cout << "Para o nordeste";
+            cout << "Para o sudeste";
         }else{
             if (vento.y == 90) {
-                cout << "Para o norte";
+                cout << "Para o sul";
             }else{
                 if (vento.y == 135) {
-                    cout << "Para o noroeste";
+                    cout << "Para o sudoeste";
                 }else{
                     if (vento.y == 180) {
                         cout << "Para o oeste";
                     }else{
                         if (vento.y == 225) {
-                            cout << "Para o sudoeste";
+                            cout << "Para o noroeste";
                         }else{
                             if (vento.y == 270) {
-                                cout << "Para o sul";
+                                cout << "Para o norte";
                             }else{
                                 if (vento.y == 315) {
-                                    cout << "Para o sudeste";
+                                    cout << "Para o nordeste";
                                 }
                             }
                         }
@@ -189,7 +207,7 @@ int main()
     }
 
         angA = 0; ///zera o ângulo
-        GotoXY(50, 1);
+        GotoXY(50, 1); ///Imprime o ângulo na tela
         cout << angA;
         teclaA = getch();
         angA = A.DefineAngulo(start);
@@ -198,6 +216,7 @@ int main()
         if (win) {
             scoreA++;
             win2 = true;
+            break;
         }
         LimpaGauge(1);
 
@@ -211,6 +230,7 @@ int main()
         if (win) {
             scoreB++;
             win2 = true;
+            break;
         }
         LimpaGauge(93);
     }
@@ -218,15 +238,15 @@ int main()
     system("cls");
 
     if (scoreA == 5 && scoreB < 5) {
-        cout << "Vitória do jogador 1";
+        cout << "Vitória do jogador 1" << endl;
     }else{
         if (scoreB == 5 && scoreA < 5) {
-            cout << "Vitória do jogador 2";
+            cout << "Vitória do jogador 2" << endl;
         }
     }
     cout << "Pressione S para jogar de novo" << endl;
     cin >> menu2;
-    }
+    }while (menu2 != 'n' && menu2 != 'N');
     }
 
 }

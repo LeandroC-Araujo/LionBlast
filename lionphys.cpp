@@ -133,3 +133,11 @@ bool Colisao (VetorBi A, QUADRI B) {
         }
     }
 }
+
+bool Colide_mapa (int x, int y, char mapa[45][124]) {
+    if (mapa[y][x] != '@') {
+        return false;
+    }else{
+        return true;
+    }
+}
